@@ -5,42 +5,13 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"os"
 	"reflect"
 	"regexp"
 	"time"
 
-	"github.com/coreos/go-etcd/etcd"
 	dtime "github.com/deis/deis/pkg/time"
 	"github.com/gliderlabs/logspout/router"
 )
-
-func init() {
-	router.AdapterFactories.Register(NewDeisLogAdapter, "deis")
-
-	// If we are connecting to etcd, get the logger's connection
-	// details from there.
-	// TODO: We should really start a job that will modify the route
-	// if this changes.
-	if etcdHost := os.Getenv("ETCD_HOST"); etcdHost != "" {
-		connectionString := []string{"http://" + etcdHost + ":4001"}
-		log.Println("etcd: " + connectionString[0])
-		etcd := etcd.NewClient(connectionString)
-		etcd.SetDialTimeout(3 * time.Second)
-		hostResp, err := etcd.Get("/deis/logs/host", false, false)
-		if err != nil {
-			log.Fatal("etcd:", err)
-		}
-		portResp, err := etcd.Get("/deis/logs/port", false, false)
-		if err != nil {
-			log.Fatal("etcd:", err)
-		}
-		host := fmt.Sprintf("%s:%s", hostResp.Node.Value, portResp.Node.Value)
-		if err := router.Routes.Add(&router.Route{Address: host, Adapter: "deis", Options: make(map[string]string)}); err != nil {
-			log.Println("deis:", err)
-		}
-	}
-}
 
 type DeisLogAdapter struct {
 	conn  net.Conn
@@ -48,7 +19,7 @@ type DeisLogAdapter struct {
 }
 
 func NewDeisLogAdapter(route *router.Route) (router.LogAdapter, error) {
-	transport, found := router.AdapterTransports.Lookup(route.AdapterTransport("udp"))
+	transport, found := router.AdapterTransports.Lookup(route.AdapterTransport("deis-udp"))
 	if !found {
 		return nil, errors.New("bad transport: " + route.Adapter)
 	}
