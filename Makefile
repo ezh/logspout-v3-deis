@@ -34,3 +34,7 @@ test-style:
 	@gofmt -l deis | read; if [ $$? == 0 ]; then echo "gofmt check failed."; exit 1; fi
 
 test: test-style
+
+commit-hook:
+	cp contrib/util/commit-msg .git/hooks/commit-msg
+
