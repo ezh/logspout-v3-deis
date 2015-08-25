@@ -7,6 +7,7 @@ import (
 	"net"
 	"reflect"
 	"regexp"
+	"strings"
 	"time"
 
 	dtime "github.com/deis/deis/pkg/time"
@@ -60,15 +61,15 @@ func (m *DeisLogMessage) Render() []byte {
 // it returns the original name and 1 as the PID.
 func getLogName(name string) (string, string) {
 	// example regex that should match: go_v2.web.1
-	match := getMatch(`(^[a-z0-9-]+)_(v[0-9]+)\.([a-z-_]+\.[0-9]+)$`, name)
+	match := getMatch(`^\/?([a-z0-9-]+)_(v[0-9]+)\.([a-z-_]+\.[0-9]+)$`, name)
 	if match != nil {
 		return match[1], match[3]
 	}
-	match = getMatch(`^k8s_([a-z0-9-]+)-([a-z]+)\.`, name)
+	match = getMatch(`^\/?k8s_([a-z0-9-]+)-([a-z]+)\.`, name)
 	if match != nil {
 		return match[1], match[2]
 	}
-	return name, "1"
+	return strings.TrimPrefix(name, "/"), "1"
 }
 
 func getMatch(regex string, name string) []string {
