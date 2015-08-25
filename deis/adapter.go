@@ -14,12 +14,12 @@ import (
 	"github.com/gliderlabs/logspout/router"
 )
 
-type DeisLogAdapter struct {
+type deisLogAdapter struct {
 	conn  net.Conn
 	route *router.Route
 }
 
-func NewDeisLogAdapter(route *router.Route) (router.LogAdapter, error) {
+func newDeisLogAdapter(route *router.Route) (router.LogAdapter, error) {
 	transport, found := router.AdapterTransports.Lookup(route.AdapterTransport("deis-udp"))
 	if !found {
 		return nil, errors.New("bad transport: " + route.Adapter)
@@ -28,13 +28,13 @@ func NewDeisLogAdapter(route *router.Route) (router.LogAdapter, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &DeisLogAdapter{
+	return &deisLogAdapter{
 		route: route,
 		conn:  conn,
 	}, nil
 }
 
-func (a *DeisLogAdapter) Stream(logstream chan *router.Message) {
+func (a *deisLogAdapter) Stream(logstream chan *router.Message) {
 	for message := range logstream {
 		m := &DeisLogMessage{message}
 		_, err := a.conn.Write(m.Render())

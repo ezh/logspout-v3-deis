@@ -11,6 +11,10 @@ const (
 
 type deisTransport int
 
+func newDeisTransport() *deisTransport {
+	return new(deisTransport)
+}
+
 func (_ *deisTransport) Dial(addr string, options map[string]string) (net.Conn, error) {
 	raddr, err := net.ResolveUDPAddr("udp", addr)
 	if err != nil {

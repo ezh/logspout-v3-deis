@@ -14,7 +14,7 @@ type deisConfigJob struct {
 	etcd *etcd.Client
 }
 
-func NewDeisConfigJob() *deisConfigJob {
+func newDeisConfigJob() *deisConfigJob {
 	return &deisConfigJob{}
 }
 
