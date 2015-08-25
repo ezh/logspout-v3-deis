@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	// TODO: Make bigger for deis
-	writeBuffer = 1024 * 1024
+	// This can be tweaked to allow longer log lines
+	writeBufferSize = 1024 * 1024
 )
 
 type deisTransport int
@@ -20,8 +20,7 @@ func (_ *deisTransport) Dial(addr string, options map[string]string) (net.Conn, 
 	if err != nil {
 		return nil, err
 	}
-	// bump up the packet size for large log lines
-	err = conn.SetWriteBuffer(writeBuffer)
+	err = conn.SetWriteBuffer(writeBufferSize)
 	if err != nil {
 		return nil, err
 	}
