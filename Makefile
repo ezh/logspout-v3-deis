@@ -1,4 +1,4 @@
-NAME=logspout-deis-dev
+NAME=logspout-v3-deis-dev
 TEST_ETCD_IMAGE=quay.io/coreos/etcd:v2.1.2
 # TEST_LOG_SERVER_IMAGE=deis/logger:v1.9.0
 TEST_LOG_SERVER_IMAGE=krancour/deis-logger:underscores
@@ -37,4 +37,3 @@ test: test-style
 
 commit-hook:
 	cp contrib/util/commit-msg .git/hooks/commit-msg
-
