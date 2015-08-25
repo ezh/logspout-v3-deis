@@ -39,9 +39,8 @@ func (j *deisConfigJob) Setup() error {
 }
 
 func (j *deisConfigJob) Run() error {
-	var currentHost string
+	var currentRoute *router.Route
 	for {
-		// TODO: Save current route instead of just the current log host
 		if j.etcd != nil {
 			hostResp, err := j.etcd.Get("/deis/logs/host", false, false)
 			if err != nil {
@@ -52,12 +51,16 @@ func (j *deisConfigJob) Run() error {
 					log.Println("deis-config: etcd:", err)
 				} else {
 					host := fmt.Sprintf("%s:%s", hostResp.Node.Value, portResp.Node.Value)
-					if host != currentHost {
-						if err := router.Routes.Add(&router.Route{Address: host, Adapter: "deis", Options: make(map[string]string)}); err != nil {
+					if currentRoute == nil || host != currentRoute.Address {
+						if currentRoute != nil {
+							router.Routes.Remove(currentRoute.ID)
+							log.Println("deis-config: removed route to", currentRoute.Address)
+						}
+						currentRoute = &router.Route{Address: host, Adapter: "deis", Options: make(map[string]string)}
+						if err := router.Routes.Add(currentRoute); err != nil {
 							log.Println("deis-config:", err)
 						} else {
-							log.Println("deis-config: added route to", host)
-							currentHost = host
+							log.Println("deis-config: added route to", currentRoute.Address)
 						}
 					}
 				}
