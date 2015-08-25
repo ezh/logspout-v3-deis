@@ -21,6 +21,11 @@ dev-clean:
 	@docker rmi $(NAME):dev &> /dev/null || true
 
 dev-build:
+# Run gofmt first to display its output
+	gofmt -l deis
+# Run it again and assess whether it failed; if so, exit
+	@gofmt -l deis | read; if [ $$? == 0 ]; then echo "gofmt check failed."; exit 1; fi
+# Build go code BEFORE trying to build the container-- the point is to fail fast
 	@go build deis/*.go && docker build -t $(NAME):dev .
 
 dev-run:
