@@ -41,6 +41,7 @@ func (j *deisConfigJob) Setup() error {
 func (j *deisConfigJob) Run() error {
 	for {
 		// TODO: Save current route instead of just the current log host
+		// TODO: There's also an error in here and we're adding a route every minute
 		var currentHost string
 		if j.etcd != nil {
 			hostResp, err := j.etcd.Get("/deis/logs/host", false, false)
