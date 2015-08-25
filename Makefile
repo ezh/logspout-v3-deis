@@ -1,10 +1,10 @@
 NAME=logspout-deis-dev
-TEST_ETCD_VERSION=v2.1.2
-TEST_LOG_SERVER_VERSION=v1.9.0
+TEST_ETCD_IMAGE=quay.io/coreos/etcd:v2.1.2
+TEST_LOG_SERVER_IMAGE=deis/logger:v1.9.0
 
 start-test-etcd:
-	@docker history quay.io/coreos/etcd:$(TEST_ETCD_VERSION) &> /dev/null || docker pull quay.io/coreos/etcd:$(TEST_ETCD_VERSION) &> /dev/null
-	@docker run --name test-etcd -d --net=host quay.io/coreos/etcd:$(TEST_ETCD_VERSION) &> /dev/null
+	@docker history $(TEST_ETCD_IMAGE) &> /dev/null || docker pull $(TEST_ETCD_IMAGE) &> /dev/null
+	@docker run --name test-etcd -d --net=host $(TEST_ETCD_IMAGE) &> /dev/null
 	@echo "test-etcd container is started."
 
 stop-test-etcd:
@@ -13,8 +13,8 @@ stop-test-etcd:
 	@echo "test-etcd container is stopped."
 
 run-test-log-server:
-	@docker history deis/logger:$(TEST_LOG_SERVER_VERSION) &> /dev/null || docker pull deis/logger:$(TEST_LOG_SERVER_VERSION) &> /dev/null
-	@docker run --name deis-logger --rm --net=host -e EXTERNAL_PORT=514 -e HOST=127.0.0.1 -e LOGSPOUT=ignore -v /var/lib/deis/store:/data deis/logger:$(TEST_LOG_SERVER_VERSION)
+	@docker history $(TEST_LOG_SERVER_IMAGE) &> /dev/null || docker pull $(TEST_LOG_SERVER_IMAGE) &> /dev/null
+	@docker run --name deis-logger --rm --net=host -e EXTERNAL_PORT=514 -e HOST=127.0.0.1 -e LOGSPOUT=ignore -v /var/lib/deis/store:/data $(TEST_LOG_SERVER_IMAGE)
 
 dev-clean:
 	@docker rmi $(NAME):dev &> /dev/null || true
