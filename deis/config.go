@@ -11,7 +11,7 @@ import (
 )
 
 type deisConfigJob struct {
-	etcd *etcd.Client 
+	etcd *etcd.Client
 }
 
 func NewDeisConfigJob() *deisConfigJob {
@@ -51,7 +51,7 @@ func (j *deisConfigJob) Run() error {
 				if err != nil {
 					log.Println("deis-config: etcd:", err)
 				} else {
-					host := fmt.Sprintf("%s:%s", hostResp.Node.Value, portResp.Node.Value)	
+					host := fmt.Sprintf("%s:%s", hostResp.Node.Value, portResp.Node.Value)
 					if host != currentHost {
 						if err := router.Routes.Add(&router.Route{Address: host, Adapter: "deis", Options: make(map[string]string)}); err != nil {
 							log.Println("deis-config:", err)
