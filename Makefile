@@ -1,6 +1,7 @@
 NAME=logspout-deis-dev
 TEST_ETCD_IMAGE=quay.io/coreos/etcd:v2.1.2
-TEST_LOG_SERVER_IMAGE=deis/logger:v1.9.0
+# TEST_LOG_SERVER_IMAGE=deis/logger:v1.9.0
+TEST_LOG_SERVER_IMAGE=krancour/deis-logger:underscores
 
 start-test-etcd:
 	@docker history $(TEST_ETCD_IMAGE) &> /dev/null || docker pull $(TEST_ETCD_IMAGE) &> /dev/null
